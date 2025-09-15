@@ -1,0 +1,21 @@
+[project]
+name = "faint"
+version = "0.1"
+description = ""
+readme = ""
+requires-python = ">=3.8"
+dependencies = [
+    # Add any dependencies here
+]
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["faint"]
+exclude = []
+
+[project.scripts]
+# Add any console scripts here

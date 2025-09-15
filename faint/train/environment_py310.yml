@@ -1,0 +1,44 @@
+name: habitat_py310
+channels:
+  - pytorch
+  - nvidia
+  - huggingface
+  - aihabitat
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - cmake
+  - pytorch==2.4.0
+  - torchvision
+  - pytorch-cuda=12.4
+  - ocl-icd-system
+  - datasets==3.1.0
+  - pyarrow==18.0.0
+  - lightning==2.4.0
+  - transformers==4.46.2
+  - ffmpeg=7.1.0
+  - opencv[build=headless*] # Avoid installing libgl, libegl, libglvnd which break habitat-sim
+  - libva[build=hb711507_0] # Avoid installing libgl, libegl, libglvnd
+  - scipy
+  - quaternion
+  - numpy>=1.20.0,<1.24.0
+  - numba
+  - attrs
+  - imageio
+  - wandb
+  - git
+  - albumentations
+  - jsonpickle
+  - sysrsync
+  - pip
+  - pip:
+    - timm
+    - roma==1.5.0
+    - warmup_scheduler
+    - vit-pytorch
+    - einops
+    - git+https://github.com/facebookresearch/habitat-sim.git@v0.3.0 # Install habitat-sim from source to have python 3.10 support
+    - git+https://github.com/facebookresearch/habitat-lab.git@v0.3.0#subdirectory=habitat-lab&egg=habitat-lab
+    - git+https://github.com/facebookresearch/habitat-lab.git@v0.3.0#subdirectory=habitat-baselines&egg=habitat-baselines
+    - git+https://github.com/robodhruv/visualnav-transformer.git@main#egg=vint-train&subdirectory=train

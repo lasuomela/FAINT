@@ -1,0 +1,28 @@
+version: '2.3'
+
+services:
+  faint:
+    image: "faint:x86-0.0.1"
+    runtime: nvidia
+    container_name: faint_container
+    privileged: true
+    network_mode: host
+    ipc: host
+    pid: host
+    cap_add:
+      - NET_ADMIN
+    environment:
+      ROS_DISCOVERY_SERVER: '${ROS_DISCOVERY_SERVER}'
+      ROS_DOMAIN_ID: '${ROS_DOMAIN_ID}'
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      ROS_SUPER_CLIENT: '${IS_ROS_SUPER_CLIENT}'
+      TORCH_HOME: '/opt/faint/faint/deployment/src/faint_deployment/model_weights/torch_hub_checkpoints'
+      NO_ALBUMENTATIONS_UPDATE: '1'
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+      - "${HOME}/.Xauthority:/root/.Xauthority:rw"
+      - "${WORKDIR}:/opt/faint"
+    stdin_open: true
+    tty: true
+
+# Add any cameras below

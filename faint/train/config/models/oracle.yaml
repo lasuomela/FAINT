@@ -1,0 +1,19 @@
+# @package _global_
+
+# Specify the policy and appropriate agent type to use for training
+
+defaults:
+
+  # Expert
+  - /toponav@habitat_baselines.il.expert_agent: oracle_velocity_agent
+  - /toponav@habitat_baselines.il.expert_policy: oracle_velocity_policy
+
+  # Student
+  - /toponav@habitat_baselines.il.student_agent: oracle_velocity_agent
+  - /toponav@habitat_baselines.il.student_policy: oracle_velocity_policy
+
+  # Eval
+  - /toponav@habitat_baselines.il.eval_agent: oracle_velocity_agent
+  - /toponav@habitat_baselines.il.eval_policy: oracle_velocity_policy
+
+  - _self_

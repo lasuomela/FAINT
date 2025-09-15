@@ -1,0 +1,13 @@
+h5py
+einops
+huggingface_hub==0.25
+tqdm
+albumentations
+
+# ViNT dependencies (these can be removed if not using ViNT)
+warmup_scheduler
+diffusers==0.11.1
+vit-pytorch==1.9.2
+efficientnet_pytorch
+git+https://github.com/robodhruv/visualnav-transformer.git@main#egg=vint-train&subdirectory=train
+-e git+https://github.com/real-stanford/diffusion_policy.git@main#egg=diffusion_policy

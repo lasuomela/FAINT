@@ -1,0 +1,12 @@
+faint/deployment/topomaps
+faint/deployment/src/faint_deployment/model_weights/
+checkpoints/
+dagger_examples
+dagger_test
+dagger_rgb
+outputs
+data
+wandb
+*.pt
+*.pth
+*.ckpt

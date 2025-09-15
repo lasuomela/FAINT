@@ -1,0 +1,9 @@
+# @package _global_
+
+# Run Eval with the oracle agent
+
+defaults:
+  - /toponav_base_config
+  - /models: oracle
+  - override /agents@agents: rgb_agent_base
+  - _self_

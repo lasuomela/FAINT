@@ -1,0 +1,34 @@
+# @package _global_
+
+# Specify the policy and appropriate agent type to use for training
+
+defaults:
+
+  # Expert
+  - /toponav@habitat_baselines.il.expert_agent: oracle_velocity_agent
+  - /toponav@habitat_baselines.il.expert_policy: oracle_velocity_policy
+
+  # Student
+  - /toponav@habitat_baselines.il.student_agent: imitation_agent
+  - /toponav@habitat_baselines.il.student_policy: imitation_vint_policy
+
+  # Eval
+  - /toponav@habitat_baselines.il.eval_agent: imitation_agent
+  - /toponav@habitat_baselines.il.eval_policy: imitation_vint_policy
+
+  - _self_
+
+habitat_baselines:   
+  il:
+    student_agent:
+     type: NonRecurrentAgent
+
+    eval_agent:
+      type: NonRecurrentAgent
+
+    trainer:
+      action_pred_horizon: 5
+      sequence_length: 6 
+
+    student_policy:
+      output_type: waypoints

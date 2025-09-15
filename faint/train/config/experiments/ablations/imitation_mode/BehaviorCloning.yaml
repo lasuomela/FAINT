@@ -1,0 +1,47 @@
+# @package _global_
+
+# Test how well vanilla behavior cloning works
+# on the topological navigation task.
+#
+# 1 round, 5 epochs/round, 100000 episodes/round
+# has the same number of training steps as
+# 10 rounds, 1 epoch/round, 10000 episodes/round
+
+defaults:
+  - /toponav_base_config
+  - /models: faint
+  - override /agents@agents: rgb_agent_base
+  - _self_
+
+
+toponav:
+  image_sensor:
+    # Resolution of the image rendered by Habitat
+    height: 126
+    width: 224
+
+  augmentation:
+    timestep_noise_multiplier: 0.1
+
+habitat_baselines:
+  wb:
+    group: Ablations
+    run_name: BehaviorCloning
+
+  il:
+    num_rounds: 1 # 1 round of DAgger == regular BC
+
+    trainer:
+      gpu_augmentation: True
+      closed_loop_eval_every_round: True
+      batch_size: 512
+      num_epochs_per_round: 5
+
+    data_collection:
+      num_episodes_per_round: 100000
+
+    student_policy:
+      encoder: theaiinstitute/theia-tiny-patch16-224-cddsv
+      obsgoal_fusion_type: CrossBlock
+      base_lr: 2e-4
+      lr_scheduler: {T_max: 5, eta_min: 1e-5}

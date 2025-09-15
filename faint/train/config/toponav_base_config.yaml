@@ -1,0 +1,101 @@
+# @package _global_
+
+# The base configuration for the topological navigation task
+# Create an experiment by overriding the agent (rgb | depth)
+# and the model (oracle | faint | vint)
+# See faint/train/config/experiments/ for examples
+
+defaults:
+  - /toponav/augmentation
+  - /toponav/image_sensor
+  - agents: ??? # Must be set by the experiment
+
+  - override /habitat/task/actions: se2_velocity_action
+  - override /habitat/task/lab_sensors: imagesubgoal
+
+  - _self_
+
+toponav:
+  augmentation:
+    subgoal_sampling_strategy: random
+    timestep_noise_multiplier: 0.0
+
+  image_sensor:
+    height: 126
+    width: 224
+    hfov: 110
+    position: [0.0, 0.38, 0.0]
+    normalize_depth: False # Depth data is converted to OpenNI format in code
+    min_depth: 0.0
+    max_depth: 10.0
+
+habitat:
+
+  env_task: GymHabitatEnvWithEmptyStep
+
+  environment:
+    max_episode_steps: 500
+    iterator_options:
+      max_scene_repeat_episodes: 10
+
+  simulator:
+    kinematic_mode: True
+    habitat_sim_v0:
+      gpu_device_id: 0
+      allow_sliding: False
+    agents:
+      main_agent:
+        radius: 0.10
+
+  dataset:
+    type: TopoNav-v1
+    split: train
+    data_path: ./data/datasets/pointnav/hm3d/v1/{split}/{split}.json.gz
+
+  task:
+    type: TopoNav-v1
+    lab_sensors:
+      imagesubgoal:
+        planner_safety_margin: 0.20
+        controller_lookahead: 0.3
+        can_fail: True
+    actions:
+      se2_velocity_action:
+        lin_vel_range: [-0.5, 0.31] # Negative forward, positive backward. Positive just for signal purposes
+        ang_vel_range: [-10.0, 10.0] 
+        time_step: 0.25
+    measurements:
+      success:
+        success_distance: 0.4 # This applies during evaluation
+    success_measure: success
+
+habitat_baselines:
+  evaluate: False
+  verbose: False
+  wb:
+    project_name: Faint
+
+  trainer_name: dagger
+
+  force_torch_single_threaded: False
+
+  vector_env_factory:
+    _target_: faint.train.habitat.habitat_venv_factory.HabitatVectorEnvFactory
+   
+  num_environments: 16
+
+  eval:
+    should_load_ckpt: False
+    eval_type: online
+    
+  il:
+    data_collection:
+      num_episodes_per_round: -1
+      save_demonstrations: True
+      success_distance: 1.0 # This applies during data collection
+
+    trainer:
+      sequence_length: 1
+      num_epochs_per_round: 1
+      num_devices: 1
+      batch_size: 32

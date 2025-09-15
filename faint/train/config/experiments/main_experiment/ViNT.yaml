@@ -1,0 +1,52 @@
+# @package _global_
+
+# Train the ViNT model with DAgger, with ~1.2M samples
+
+defaults:
+  - /toponav_base_config
+  - /models: vint
+  - override /agents@agents: rgb_agent_base
+  - _self_
+
+
+toponav:
+  image_sensor:
+    # Set aspect ratio of the rendered images to 16:9
+    # This is resized to 224x224 before being passed to the model
+    height: 126
+    width: 224
+
+  augmentation:
+    timestep_noise_multiplier: 0.1
+
+habitat_baselines:
+  wb:
+    group: SimExperiments
+    run_name: ViNT
+
+  il:
+    num_rounds: 10 # 10 rounds of DAgger
+
+    trainer:
+      gpu_augmentation: True
+      closed_loop_eval_every_round: True
+      batch_size: 256 # Use smaller batch size to fit in memory
+      num_epochs_per_round: 3
+
+    data_collection:
+      num_episodes_per_round: 1000
+
+    student_policy:
+      # Freezing encoder doesn't make sense for ViNT
+      # since the obsgoal encoder input is not
+      # a standard RGB image
+      encoder: efficientnet_b0
+      pretrained_encoder: True
+      freeze_encoder: False
+      base_lr: 1e-4 # Decrease the lr to match the smaller batch size
+      lr_scheduler: {T_max: 30, eta_min: 5e-6}
+
+habitat:
+  environment:
+    iterator_options:
+      max_scene_repeat_episodes: 1 # Increase data diversity by changing scene after each episode

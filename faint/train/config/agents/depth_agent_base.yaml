@@ -1,0 +1,29 @@
+# @package _global_
+
+defaults:
+  - /habitat_baselines: toponav_il_config_base
+  - /benchmark/nav/pointnav: pointnav_base
+  - /habitat/dataset/pointnav: hm3d
+  - /habitat/task/measurements: collisions
+
+  - override /habitat/simulator/sim_sensors@habitat.simulator.agents.main_agent.sim_sensors.rgb_sensor:
+
+  - _self_
+
+habitat:
+  simulator:
+    agents:
+      main_agent:
+        sim_sensors:
+          depth_sensor:
+            height: ${toponav.image_sensor.height}
+            width: ${toponav.image_sensor.width}
+            hfov: ${toponav.image_sensor.hfov}
+            position: ${toponav.image_sensor.position}
+            normalize_depth: ${toponav.image_sensor.normalize_depth}
+            min_depth: ${toponav.image_sensor.min_depth}
+            max_depth: ${toponav.image_sensor.max_depth}
+
+toponav:
+  image_sensor:
+    obs_type: depth

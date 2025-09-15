@@ -1,0 +1,11 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+# Download the ros2 install script
+RUN curl -L https://raw.githubusercontent.com/dusty-nv/jetson-containers/master/packages/ros/ros2_install.sh -o /ros2_install.sh && \
+    chmod +x /ros2_install.sh
+
+# Install the usb_cam package
+RUN bash -c "ls /opt && /ros2_install.sh usb_cam"
+
+ENTRYPOINT ["/ros_entrypoint.sh"]

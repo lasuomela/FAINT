@@ -1,0 +1,71 @@
+version: '2.3'
+
+services:
+  faint:
+    image: "faint:r${L4T_VERSION}"
+    runtime: nvidia
+    container_name: faint_container
+    privileged: true
+    network_mode: host
+    ipc: host
+    pid: host
+    cap_add:
+      - NET_ADMIN
+    environment:
+      ROS_DISCOVERY_SERVER: '${ROS_DISCOVERY_SERVER}'
+      ROS_DOMAIN_ID: '${ROS_DOMAIN_ID}'
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      ROS_SUPER_CLIENT: '${IS_ROS_SUPER_CLIENT}'
+      TORCH_HOME: '/opt/faint/faint/deployment/src/faint_deployment/model_weights/torch_hub_checkpoints'
+      NO_ALBUMENTATIONS_UPDATE: '1'
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+      - "${HOME}/.Xauthority:/root/.Xauthority:rw"
+      - "${WORKDIR}:/opt/faint"
+    stdin_open: true
+    tty: true
+
+  # Add camera options below, e.g.
+  usb_cam:
+    image: usb_cam:latest
+    container_name: usb_cam_container
+    privileged: true
+    network_mode: host
+    ipc: host
+    pid: host
+    environment:
+      ROS_DISCOVERY_SERVER: '${ROS_DISCOVERY_SERVER}'
+      ROS_DOMAIN_ID: '${ROS_DOMAIN_ID}'
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      ROS_SUPER_CLIENT: '${IS_ROS_SUPER_CLIENT}'
+    volumes:
+      - "/dev:/dev"
+      - "/tmp/.X11-unix/:/tmp/.X11-unix"
+      - ${WORKDIR}/faint/deployment/src/faint_deployment/config/usb_cam.yaml:/cam_params.yaml
+      - ${WORKDIR}/docker/jetson/usb_cam/launch_usb_cam.sh:/launch_usb_cam.sh
+    stdin_open: true
+    tty: true
+    command: "bash /launch_usb_cam.sh" # This command will get the camera usb device based on vendor id and launch the camera node
+
+  zed2:
+    image: zed_ros2_l4t_image:latest
+    container_name: zed2_container
+    runtime: nvidia
+    privileged: true
+    network_mode: host
+    ipc: host
+    pid: host
+    environment:
+      ROS_DISCOVERY_SERVER: '${ROS_DISCOVERY_SERVER}'
+      ROS_DOMAIN_ID: '${ROS_DOMAIN_ID}'
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      ROS_SUPER_CLIENT: '${IS_ROS_SUPER_CLIENT}'
+    volumes:
+      - "/dev:/dev"
+      - "/tmp/.X11-unix/:/tmp/.X11-unix"
+      - "/usr/local/zed/zed_docker_ai/:/usr/local/zed/resources/"
+      - "/usr/local/zed/settings/:/usr/local/zed/settings/"
+      - ${WORKDIR}/faint/deployment/src/faint_deployment/config/zed2i.yaml:/opt/zed2i.yaml
+    stdin_open: false
+    tty: false
+    command: "ros2 launch zed_wrapper zed_camera.launch.py camera_model:='zed2i' ros_params_override_path:=/opt/zed2i.yaml"

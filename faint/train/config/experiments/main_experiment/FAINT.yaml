@@ -1,0 +1,48 @@
+# @package _global_
+
+# Train the FAINT model with DAgger, with ~1.2M samples
+
+defaults:
+  - /toponav_base_config
+  - /models: faint
+  - override /agents@agents: rgb_agent_base
+  - _self_
+
+
+toponav:
+  image_sensor:
+    # Set aspect ratio of the rendered images to 16:9
+    # This is resized to 224x224 before being passed to the model
+    height: 126
+    width: 224
+
+  augmentation:
+    timestep_noise_multiplier: 0.1
+
+habitat_baselines:
+  wb:
+    group: SimExperiments
+    run_name: FAINT
+
+  il:
+    num_rounds: 10 # 10 rounds of DAgger
+
+    trainer:
+      gpu_augmentation: True
+      closed_loop_eval_every_round: True
+      batch_size: 512
+      num_epochs_per_round: 3
+
+    data_collection:
+      num_episodes_per_round: 1000
+
+    student_policy:
+      encoder: theaiinstitute/theia-tiny-patch16-224-cddsv
+      obsgoal_fusion_type: CrossBlock
+      base_lr: 2e-4
+      lr_scheduler: {T_max: 30, eta_min: 1e-5}
+
+habitat:
+  environment:
+    iterator_options:
+      max_scene_repeat_episodes: 1 # Increase data diversity by changing scene after each episode

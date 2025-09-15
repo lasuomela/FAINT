@@ -1,0 +1,49 @@
+# @package _global_
+
+# Note: With current batch size will require 8 V100's. Halve batch size if using 4 V100's.
+
+defaults:
+  - /toponav_base_config
+  - /models: vint
+  - override /agents@agents: rgb_agent_base
+  - _self_
+
+
+toponav:
+  image_sensor:
+    # Set aspect ratio of the rendered images to 16:9
+    # This is resized to 224x224 before being passed to the model
+    height: 126
+    width: 224
+
+  augmentation:
+    timestep_noise_multiplier: 0.1
+
+habitat_baselines:
+  wb:
+    group: Ablations
+    run_name: ViNT_sim2real
+
+  il:
+    num_rounds: 10 # 10 rounds of DAgger
+
+    trainer:
+      gpu_augmentation: True
+      closed_loop_eval_every_round: True
+      batch_size: 512
+      num_epochs_per_round: 1
+
+    data_collection:
+      num_episodes_per_round: 10000
+
+    student_policy:
+      # Freezing encoder doesn't make sense for ViNT
+      # since the obsgoal encoder input is not
+      # a standard RGB image
+      encoder: efficientnet_b0
+      input_height: 126
+      input_width: 224
+      pretrained_encoder: True
+      freeze_encoder: False
+      base_lr: 2e-4
+      lr_scheduler: {T_max: 10, eta_min: 1e-5}
