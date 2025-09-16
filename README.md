@@ -8,7 +8,7 @@
 <br>
 &dagger;Corresponding author
 
-<a href=""><img src='https://img.shields.io/badge/arXiv-Update-red' alt='Paper PDF'></a>
+<a href="https://arxiv.org/abs/2509.11791"><img src='https://img.shields.io/badge/arXiv-2509.11791-red' alt='Paper PDF'></a>
 <a href='https://lasuomela.github.io/faint/'><img src='https://img.shields.io/badge/Project_Page-FAINT-green' alt='Project Page'></a>
 <a href='https://huggingface.co/collections/lauriasuo/faint-67b71dbaf71f1b648986f382'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-blue'></a>
 </div>
@@ -182,7 +182,7 @@ If you find this project useful, please consider citing:
 @article{suomela2025synthetic,
   title={Synthetic vs. Real Training Data for Visual Navigation},
   author={Suomela, Lauri and Kuruppu Arachchige, Sasanka and Torres, German F. and Edelman, Harry and Kämäräinen, Joni-Kristian}
-  journal={arXiv:},
+  journal={arXiv:2509.11791},
   year={2025}
 }
 ```
