@@ -164,6 +164,27 @@ srun python -u \
 
 If the environment has a fast temporary disk to use during the Slurm job, you can specify the path by overriding `habitat_baselines.il.data_collection.fast_tmp_dir`.
 
+#### Sim eval
+
+You can also run evaluation of the Huggingface (or your own) model checkpoints in the simulator:
+
+```bash
+torchrun --nnodes=1 --nproc-per-node=<NUM_GPUS> \
+    -m faint.train.run \
+    --config-name=experiments/test/faint.yaml \
+    habitat_baselines.il.trainer.num_devices=<NUM_GPUS> \
+    habitat_baselines.il.trainer.num_nodes=1 \
+    habitat_baselines.evaluate=True \
+    habitat_baselines.test_episode_count=-1 \ # Optional, can be used for limiting the number of test episodes
+    habitat_baselines.eval.video_option=['disk'] \ # Optional, setting video_option to 'disk' creates visualization videos but slows down eval considerably
+    habitat_baselines.il.eval_policy.checkpoint=<CKPT_PATH>
+```
+
+Set `<NUM_GPUS>` to appropriate values for your environment. `<CKPT_PATH>` should point to a checkpoint file downloaded from the Huggingface, or one you trained yourself.
+
+Note: The `FAINT-Real` checkpoint from HF will underperform in the sim, because currently the simulator doesn't unnormalize waypoints. This is required for the checkpoints trained with the real datasets, and is implemented in the actual deployment code. See `faint/deployment/src/faint_deployment/faint_deployment/policies/goal_reaching/faint_policy.py` for reference.
+
+
 ## Acknowledgements
 
 Parts of this repo have been inspired by these awesome repositories:
