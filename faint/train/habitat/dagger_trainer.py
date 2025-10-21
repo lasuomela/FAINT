@@ -242,26 +242,6 @@ class HabitatDaggerTrainer(BaseILTrainer):
         self.device = get_device(self.config)
         logger.add_filehandler(self.config.habitat_baselines.log_file)
 
-        # Get the eval policy from the config
-        policy_type = toponav_registry.get_policy(
-            self.config.habitat_baselines.il.eval_policy.type
-        )
-        # Check if the policy has a checkpoint to load
-        if self.config.habitat_baselines.il.eval_policy.type != 'OracleVelocityPolicy':
-            if (self.config.habitat_baselines.il.eval_policy.checkpoint != Path() 
-                ):
-                policy = policy_type.load_from_checkpoint(
-                    self.config.habitat_baselines.il.eval_policy.checkpoint
-                )
-            else:
-                raise ValueError("No checkpoint found for the eval policy")
-            
-            # Get a Lightning trainer for the policy
-            self.lightning_trainer = LightningTrainer(
-                policy,
-                baselines_config=self.config.habitat_baselines,
-            )
-
     def _gen_episode_key(self, episode_info):
         """
         Generate a unique key for the episode based on the scene_id and episode_id.
@@ -1181,17 +1161,5 @@ class HabitatDaggerTrainer(BaseILTrainer):
             # Upload the stats to wandb
             if self.world_rank == 0:
                 wandb.log(wandb_stats)
-
-        # Standalone eval
-        elif hasattr(config.habitat_baselines.il.eval_policy, 'checkpoint'):
-            if config.habitat_baselines.test_episode_count == -1:
-                wandb_run_id = Path(config.habitat_baselines.il.eval_policy.checkpoint).parts[-3]
-                wandb_project_name = config.habitat_baselines.wb.project_name            
-                api = wandb.Api()
-                api.project = wandb_project_name
-                run = api.run(wandb_project_name+'/'+wandb_run_id)
-                for k, v in aggregated_stats.items():
-                    run.summary[k] = v
-                run.summary.update()
                 
         self.envs.close()

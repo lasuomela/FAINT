@@ -129,15 +129,45 @@ class ImitationBaseAgent(BaseAgent):
         self.obs_key = agent_config.obs_key
         self.policy = None
 
+
     def _init_policy(self, policy_config):
         """
         Initialize a policy from a config file.
         """
         if not policy_config.checkpoint:
             raise ValueError("Checkpoint not found in policy config")
+        
+        policy_type = toponav_registry.get_policy(policy_config.type)                    
 
-        policy_type = toponav_registry.get_policy(policy_config.type)            
-        self.policy = policy_type.load_from_checkpoint(policy_config.checkpoint).to(self._device)
+        # Check if the checkpoint is a lightning checkpoint
+        if 'pytorch-lightning_version' in torch.load(
+            policy_config.checkpoint,
+            map_location='cpu',
+            weights_only=False,
+        ):
+            logger.info(f"Loading eval policy from lightning checkpoint: {policy_config.checkpoint}")
+
+            policy = policy_type.load_from_checkpoint(
+                policy_config.checkpoint
+            )
+        else:
+            logger.info(f"Loading eval policy state dict from checkpoint: {policy_config.checkpoint}")
+
+            policy = policy_type(
+                policy_config,
+                num_train_gpus=1, # Can be safely hardoced to 1 since the parameter is not used atm
+                channels = 3, # Hardcode to RGB for now
+            )
+            policy.net.load_state_dict(
+                torch.load(
+                    policy_config.checkpoint,
+                    map_location=self._device,
+                    weights_only=True,
+                )
+            )
+
+        self.policy = policy.to(self._device)
+
 
     def set_policy(self, policy):
         """

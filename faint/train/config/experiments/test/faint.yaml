@@ -1,0 +1,9 @@
+# @package _global_
+
+# Run Eval with an imitation agent
+
+defaults:
+  - /toponav_base_config
+  - /models: faint
+  - override /agents@agents: rgb_agent_base
+  - _self_
