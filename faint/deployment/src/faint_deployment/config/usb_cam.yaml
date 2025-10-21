@@ -1,0 +1,10 @@
+/**:
+    ros__parameters:
+      # camera parameters
+      image_width: 640
+      image_height: 360
+      pixel_format: yuyv
+      camera_frame_id: "usb_cam"
+      io_method: "mmap"
+      framerate: 20.0 # Low fps values lead to big latency growth for some reason
+      use_sim_time: false

@@ -1,0 +1,28 @@
+turtlebot4:
+  # linear and angular speed limits for the robot
+  max_v: 0.31 # m/s
+  max_w: 0.6 # rad/s
+
+  # observation rate of the robot
+  frame_rate: 5 # Hz
+  camera_height: 0.35 # m
+
+  # command rate of the robot
+  cmd_loop_frequency: 20 # Hz
+
+  # topic names
+  vel_navi_topic: "/cmd_vel"
+  odom_topic: "/odom"
+
+  ## Camera options
+
+  # zed2i camera 
+  zed2:
+    camera_topic: /zed/zed_node/rgb/image_rect_color
+    camera_info_topic: /zed/zed_node/rgb/camera_info
+    depth_camera_topic: /zed/zed_node/depth/depth_registered
+  
+  # usb camera
+  usb_cam:
+    camera_topic: /usb_cam/image_raw
+    camera_info_topic: /usb_cam/camera_info

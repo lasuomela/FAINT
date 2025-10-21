@@ -12,7 +12,6 @@ multirun/
 jetson-containers/
 checkpoints/
 log/
-src/
 
 faint/deployment/src/log/
 faint/deployment/src/build/

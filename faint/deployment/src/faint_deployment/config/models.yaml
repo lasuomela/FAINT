@@ -1,0 +1,123 @@
+# Model trained for 10 rounds of DAgger with ~12M examples from the Habitat simulator
+FAINT-Sim:
+  model:
+    name: "faint_policy"
+    checkpoint_path: "FAINT-Sim/model_torchscript.pt" # Relative to model_weights dir
+    action_space: "waypoints" # Only 'waypoints' supported for now
+    normalize: False # If the model was trained with waypoint normalization
+    image_size: [224, 224] # [width, height]
+    obs_type: "rgb"
+    sequence_length: 6 # Number of observation frames in the model input sequence
+    seq_type: "seq_dim" # How to provide the sequence of observations to the model ( 'seq_dim' | 'channel_stack' )
+    target_waypoint_idx: 2 # Index of the target waypoint in the predicted trajectory
+    normalization_type: "IMAGENET_STANDARD" # "IMAGENET_STANDARD" | "IMAGENET_DEFAULT"
+    huggingface_repo_id: 'lauriasuo/FAINT-Sim' # For loading pretrained models
+
+# Model trained with the ~1.2M examples from the GNM/ViNT datasets of real-world data
+FAINT-Real:
+  model:
+    name: "faint_policy"
+    checkpoint_path: "FAINT-Real/model_torchscript.pt"
+    action_space: "waypoints"
+    normalize: True # Models trained with real-world data are trained with waypoint normalization
+    image_size: [224, 224] # [width, height]
+    obs_type: "rgb"
+    sequence_length: 6
+    target_waypoint_idx: 2
+    normalization_type: "IMAGENET_STANDARD"
+    seq_type: "seq_dim"
+    huggingface_repo_id: 'lauriasuo/FAINT-Real'
+
+
+
+##########################
+# Place recognition models
+##########################
+
+eigenplaces:
+  output: "global-feats-eigenplaces"
+  model:
+    type: "place_recognition"
+    name: "eigenplaces"
+    variant: "EigenPlaces"
+    backbone: "ResNet18"
+    fc_output_dim: 512
+    image_size: [640, 360]
+
+
+##################################
+#
+# Baseline goal-reaching policies
+#
+##################################
+
+gnm:
+  model:
+    # model params
+    model_type: gnm
+    context_size: 5 # context length
+    len_traj_pred: 5 # number of future waypoints to predict
+    normalize: True # whether to normalize action space
+    learn_angle: True # whether to learn the yaw for each waypoint
+    obs_encoding_size: 1024  # observation encoding dimension
+    goal_encoding_size: 1024 # goal encoding dimension
+
+    # faint_deployment interface related params
+    type: "temporal_distance"
+    name: vint_policy
+    image_size: [85, 64] # [widht, height] of input images
+    checkpoint_path: gnm.pth # path of the model in ../model_weights
+    target_waypoint_idx: 2 # index of the target waypoint in the predicted trajectory
+    obs_type: "rgb"
+
+vint:
+  model:
+    # model params
+    model_type: vint
+    context_size: 5
+    len_traj_pred: 5
+    learn_angle: True
+    obs_encoder: "efficientnet-b0" # by default, this is imagenet pretrained
+    obs_encoding_size: 512
+    mha_num_attention_heads: 4
+    mha_num_attention_layers: 4
+    mha_ff_dim_factor: 4
+    late_fusion: False
+    normalize: True
+
+    # faint_deployment interface related params
+    type: "temporal_distance"
+    name: vint_policy
+    image_size: [85, 64] # width, height
+    target_waypoint_idx: 2 # index of the target waypoint in the predicted trajectory
+    obs_type: "rgb"
+    checkpoint_path: "vint.pth" # path of the model in ../model_weights
+
+nomad:
+  model:
+    # model params
+    model_type: nomad
+    context_size: 3
+    len_traj_pred: 8
+    learn_angle: True
+    obs_encoder: "efficientnet-b0" # by default, this is imagenet pretrained
+    vision_encoder: 'nomad_vint'
+    encoding_size: 256
+    mha_num_attention_heads: 4
+    mha_num_attention_layers: 4
+    mha_ff_dim_factor: 4
+    attn_unet: False
+    cond_predict_scale: False
+    down_dims: [64, 128, 256]
+    num_diffusion_iters: 10
+    num_samples: 8
+    late_fusion: False
+    normalize: True
+
+    # faint_deployment interface related params
+    type: "temporal_distance"
+    name: vint_policy
+    image_size: [96, 96] # width, height
+    target_waypoint_idx: 2 # index of the target waypoint in the predicted trajectory
+    obs_type: "rgb"
+    checkpoint_path: "nomad.pth" # path of the model in ../model_weights
