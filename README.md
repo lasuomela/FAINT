@@ -200,10 +200,11 @@ Parts of this repo have been inspired by these awesome repositories:
 If you find this project useful, please consider citing:
 
 ```bibtex
-@article{suomela2025synthetic,
-  title={Synthetic vs. Real Training Data for Visual Navigation},
-  author={Suomela, Lauri and Kuruppu Arachchige, Sasanka and Torres, German F. and Edelman, Harry and Kämäräinen, Joni-Kristian}
-  journal={arXiv:2509.11791},
-  year={2025}
-}
+  @InProceedings{suomela2026synthetic,
+    title={Synthetic vs. Real Training Data for Visual Navigation},
+    author={Suomela, Lauri and Kuruppu Arachchige, Sasanka and Torres, German F. and Edelman, Harry and Kämäräinen, Joni-Kristian},
+    booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+    year={2026},
+    url={https://arxiv.org/abs/2509.11791},
+  }
 ```
